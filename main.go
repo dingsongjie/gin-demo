@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,9 +10,13 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 
+	docs "lenovo-drive-mi-api/docs"
+
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 var (
@@ -23,12 +26,13 @@ var (
 )
 
 func main() {
+	logger, _ = zap.NewProductionConfig().Build()
+	defer logger.Sync()
 	err := godotenv.Load(".env")
 	if err != nil {
 		logger.Fatal("Failed to load environment variables: %v", zap.Error(err))
 	}
 	r := gin.Default()
-	logger, _ = zap.NewProductionConfig().Build()
 
 	// Add a ginzap middleware, which:
 	//   - Logs all requests, like a combined access and error log.
@@ -39,6 +43,8 @@ func main() {
 	// Logs all panic to error log
 	//   - stack means whether output the stack info.
 	r.Use(ginzap.RecoveryWithZap(logger, true))
+
+	docs.SwaggerInfo.BasePath = "/"
 	// 连接数据库
 	UserInfoConnectionString = os.Getenv("USER_INFO_DB_CONNECTION_STRING")
 	NewPathConnectionString = os.Getenv("NEW_PATH_DB_CONNECTION_STRING")
@@ -52,20 +58,12 @@ func main() {
 			"status": "health",
 		})
 	})
-	r.POST("/getUserInfomation", func(c *gin.Context) {
-		var requestUser = requestModel{}
-		json.NewDecoder(c.Request.Body).Decode(&requestUser)
-		info, err := getAllInformation(requestUser.Paths)
-		if err != nil {
-			logger.Error(err.Error())
-		}
-		c.JSON(http.StatusOK, info)
-	})
+	r.POST("/getUserInfomation", getAllInformation)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	srv := &http.Server{
 		Addr:    ":8080",
 		Handler: r,
 	}
-
 	go func() {
 		// 服务连接
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

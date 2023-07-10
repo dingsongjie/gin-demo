@@ -2,26 +2,53 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/STRockefeller/go-linq"
+	"github.com/gin-gonic/gin"
 )
 
-func getAllInformation(paths []string) ([]FileUserInformation, error) {
-	result, err := GetUserInfo(paths)
-	if err != nil {
-		return nil, err
+// @BasePath /
+
+// getAllInformation
+// @Summary getAllInformation
+// @Schemes
+// @Description getAllInformation
+// @Tags getAllInformation
+// @Accept json
+// @Produce json
+// @param request body requestModel true "requestUser"
+// @Success 200  {array} FileUserInformation
+// @Router /getUserInfomation [post]
+func getAllInformation(c *gin.Context) {
+	var requestUser = requestModel{}
+	if err := c.BindJSON(&requestUser); err != nil {
+		return
 	}
-	err = setNewPath(paths, result)
+	info, err := GetNewPathInfo(requestUser.Paths)
 	if err != nil {
-		return nil, err
+		logger.Error(err.Error())
+		c.AbortWithStatus(400)
 	}
-	return result, nil
+	err = SetUserInfo(requestUser.Paths, info)
+	if err != nil {
+		logger.Error(err.Error())
+		c.AbortWithStatus(400)
+	} else {
+		c.JSON(http.StatusOK, info)
+	}
 }
 
-func GetUserInfo(paths []string) ([]FileUserInformation, error) {
+func SetUserInfo(paths []string, enumerable []FileUserInformation) error {
+	results := linq.Linq[*FileUserInformation]{}
+	for index, _ := range enumerable {
+		results.Add(&enumerable[index])
+	}
 	userInfoDbClient := FileUserInfoDbClient{UserInfoConnectionString}
-	result := []FileUserInformation{}
 	db, err := userInfoDbClient.getDb()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer db.Close()
 	var inCodition string
@@ -33,32 +60,56 @@ func GetUserInfo(paths []string) ([]FileUserInformation, error) {
 		}
 		inCodition += "?"
 	}
-	sqlstr := fmt.Sprintf(`select entry.ctime, cuser.slug,entry.mtime,muser.slug,
-	 entry.path from iris_name_entry as entry join iris_user as cuser on  entry.creator_uid = cuser.id  
+	sqlstr := fmt.Sprintf(`select entry.path, entry.ctime, cuser.slug,entry.mtime,muser.slug,
+	 entry.path from iris_name_entry as entry left join iris_user as cuser on  entry.creator_uid = cuser.id  
 	 join iris_user as muser on  entry.updator_uid = muser.id where entry.nsid=1 and entry.path in (%s)`, inCodition)
 	rows, err := db.Query(sqlstr, params...)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		currentInfo := FileUserInformation{}
-		err := rows.Scan(&currentInfo.CreatedTime, &currentInfo.CreatedUserCode, &currentInfo.LastModifiedTime, &currentInfo.LastModifiedUserCode, &currentInfo.OriginPath)
+		newInfo := FileUserInformation{}
+		err := rows.Scan(&newInfo.OriginPath, &newInfo.CreatedTime, &newInfo.CreatedUserCode, &newInfo.LastModifiedTime, &newInfo.LastModifiedUserCode, &newInfo.OriginPath)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		result = append(result, currentInfo)
+		currentInfo := results.FirstOrDefault(func(s *FileUserInformation) bool {
+			return s.OriginPath == newInfo.OriginPath
+		})
+		if err != nil {
+			return err
+		}
+		if currentInfo == nil {
+			continue
+		}
+		if newInfo.CreatedUserCode != "" {
+			currentInfo.CreatedTime = newInfo.CreatedTime
+			currentInfo.LastModifiedTime = newInfo.LastModifiedTime
+			currentInfo.CreatedUserCode = newInfo.CreatedUserCode
+			currentInfo.LastModifiedUserCode = newInfo.LastModifiedUserCode
+		}
 	}
-	return result, nil
+
+	results.ForEach(func(fui *FileUserInformation) {
+		if time.Time.IsZero(fui.CreatedTime) {
+			fui.CreatedTime = time.Now()
+		}
+		if time.Time.IsZero(fui.LastModifiedTime) {
+			fui.LastModifiedTime = time.Now()
+		}
+	})
+	return nil
 }
 
-func setNewPath(paths []string, enumerable []FileUserInformation) error {
+func GetNewPathInfo(paths []string) ([]FileUserInformation, error) {
+	var results = []FileUserInformation{}
 	newPathDbClient := FileUserInfoDbClient{NewPathConnectionString}
 
 	db, err := newPathDbClient.getDb()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer db.Close()
 	var inCodition string
@@ -74,27 +125,19 @@ func setNewPath(paths []string, enumerable []FileUserInformation) error {
 	rows, err := db.Query(
 		sqlstr, params...)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var originPath, newPath string
-		err := rows.Scan(&originPath, &newPath)
+		info := FileUserInformation{}
+		err := rows.Scan(&info.OriginPath, &info.NewPath)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		currentInfo := filter(enumerable, func(s *FileUserInformation) bool {
-			return s.OriginPath == originPath
-		})
-		if err != nil {
-			return err
-		}
-		if currentInfo.OriginPath != "" {
-			currentInfo.NewPath = newPath
-		}
+		results = append(results, info)
 	}
-	return nil
+	return results, nil
 }
 
 func filter(ss []FileUserInformation, pred func(*FileUserInformation) bool) (ret *FileUserInformation) {

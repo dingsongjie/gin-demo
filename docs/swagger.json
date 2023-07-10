@@ -1,0 +1,84 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/getUserInfomation": {
+            "post": {
+                "description": "getAllInformation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "getAllInformation"
+                ],
+                "summary": "getAllInformation",
+                "parameters": [
+                    {
+                        "description": "requestUser",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.requestModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/main.FileUserInformation"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "main.FileUserInformation": {
+            "type": "object",
+            "properties": {
+                "createdTime": {
+                    "type": "string"
+                },
+                "createdUserCode": {
+                    "type": "string"
+                },
+                "lastModifiedTime": {
+                    "type": "string"
+                },
+                "lastModifiedUserCode": {
+                    "type": "string"
+                },
+                "newPath": {
+                    "type": "string"
+                },
+                "originPath": {
+                    "type": "string"
+                }
+            }
+        },
+        "main.requestModel": {
+            "type": "object",
+            "required": [
+                "paths"
+            ],
+            "properties": {
+                "paths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

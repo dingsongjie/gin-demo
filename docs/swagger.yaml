@@ -1,0 +1,53 @@
+definitions:
+  main.FileUserInformation:
+    properties:
+      createdTime:
+        type: string
+      createdUserCode:
+        type: string
+      lastModifiedTime:
+        type: string
+      lastModifiedUserCode:
+        type: string
+      newPath:
+        type: string
+      originPath:
+        type: string
+    type: object
+  main.requestModel:
+    properties:
+      paths:
+        items:
+          type: string
+        type: array
+    required:
+    - paths
+    type: object
+info:
+  contact: {}
+paths:
+  /getUserInfomation:
+    post:
+      consumes:
+      - application/json
+      description: getAllInformation
+      parameters:
+      - description: requestUser
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.requestModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/main.FileUserInformation'
+            type: array
+      summary: getAllInformation
+      tags:
+      - getAllInformation
+swagger: "2.0"

@@ -3,7 +3,7 @@ package main
 import "time"
 
 type requestModel struct {
-	Paths []string
+	Paths []string `validate:"required"`
 }
 
 type ResponseModel struct {
