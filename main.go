@@ -10,23 +10,22 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 
-	docs "lenovo-drive-mi-api/docs"
+	"lenovo-drive-mi-api/db"
+	"lenovo-drive-mi-api/log"
+
+	routers "lenovo-drive-mi-api/routes"
 
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 var (
-	UserInfoConnectionString string
-	NewPathConnectionString  string
-	logger                   *zap.Logger
+	logger *zap.Logger
 )
 
 func main() {
-	logger, _ = zap.NewProductionConfig().Build()
+	logger = log.Logger
 	defer logger.Sync()
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -44,22 +43,12 @@ func main() {
 	//   - stack means whether output the stack info.
 	r.Use(ginzap.RecoveryWithZap(logger, true))
 
-	docs.SwaggerInfo.BasePath = "/"
-	// 连接数据库
-	UserInfoConnectionString = os.Getenv("USER_INFO_DB_CONNECTION_STRING")
-	NewPathConnectionString = os.Getenv("NEW_PATH_DB_CONNECTION_STRING")
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-	r.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"status": "health",
-		})
-	})
-	r.POST("/getUserInfomation", getAllInformation)
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	// 配置数据库
+
+	db.Config(os.Getenv("USER_INFO_DB_CONNECTION_STRING"), os.Getenv("NEW_PATH_DB_CONNECTION_STRING"))
+
+	routers.AddRouter(r)
+
 	srv := &http.Server{
 		Addr:    ":8080",
 		Handler: r,

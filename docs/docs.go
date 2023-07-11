@@ -36,7 +36,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.requestModel"
+                            "$ref": "#/definitions/models.RequestModel"
                         }
                     }
                 ],
@@ -46,7 +46,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/main.FileUserInformation"
+                                "$ref": "#/definitions/models.FileUserInformation"
                             }
                         }
                     }
@@ -55,7 +55,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "main.FileUserInformation": {
+        "models.FileUserInformation": {
             "type": "object",
             "properties": {
                 "createdTime": {
@@ -78,7 +78,7 @@ const docTemplate = `{
                 }
             }
         },
-        "main.requestModel": {
+        "models.RequestModel": {
             "type": "object",
             "required": [
                 "paths"

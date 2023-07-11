@@ -24,7 +24,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.requestModel"
+                            "$ref": "#/definitions/models.RequestModel"
                         }
                     }
                 ],
@@ -34,7 +34,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/main.FileUserInformation"
+                                "$ref": "#/definitions/models.FileUserInformation"
                             }
                         }
                     }
@@ -43,7 +43,7 @@
         }
     },
     "definitions": {
-        "main.FileUserInformation": {
+        "models.FileUserInformation": {
             "type": "object",
             "properties": {
                 "createdTime": {
@@ -66,7 +66,7 @@
                 }
             }
         },
-        "main.requestModel": {
+        "models.RequestModel": {
             "type": "object",
             "required": [
                 "paths"

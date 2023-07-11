@@ -1,5 +1,5 @@
 definitions:
-  main.FileUserInformation:
+  models.FileUserInformation:
     properties:
       createdTime:
         type: string
@@ -14,7 +14,7 @@ definitions:
       originPath:
         type: string
     type: object
-  main.requestModel:
+  models.RequestModel:
     properties:
       paths:
         items:
@@ -37,7 +37,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/main.requestModel'
+          $ref: '#/definitions/models.RequestModel'
       produces:
       - application/json
       responses:
@@ -45,7 +45,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/main.FileUserInformation'
+              $ref: '#/definitions/models.FileUserInformation'
             type: array
       summary: getAllInformation
       tags:
