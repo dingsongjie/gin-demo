@@ -46,15 +46,6 @@ func GetAllInformation(c *gin.Context) {
 
 func setUserInfo(paths []string, enumerable linq.Linq[*model.FileUserInformation]) error {
 	db := db.FileUserInfoDb
-	// sqlstr := fmt.Sprintf(`select entry.path, entry.ctime, cuser.slug,entry.mtime,muser.slug,
-	//  entry.path from iris_name_entry as entry left join iris_user as cuser on  entry.creator_uid = cuser.id
-	//  join iris_user as muser on  entry.updator_uid = muser.id where entry.nsid=1 and entry.path in (%s)`, inCodition)
-	// results := []entities.FileEntry{}
-	// sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
-	// 	//return tx.Model().Where("entry.nsid=1 and entry.path in ?", paths).Find(&results)
-	// 	return tx.Joins("User").Find(&result)
-	// })
-
 	rows, err := db.Table("iris_name_entry as entry").
 		Select("entry.path, entry.ctime, cuser.slug,entry.mtime,muser.slug, entry.path").
 		Joins("left join iris_user as cuser on  entry.creator_uid = cuser.id").
@@ -104,19 +95,7 @@ func setNowIfTimeIsZero(enumerable linq.Linq[*models.FileUserInformation]) {
 
 func getNewPathInfo(paths []string) (result linq.Linq[*models.FileUserInformation], err error) {
 	db := db.FileNewPathDb
-	// var inCodition string
-	// var params []interface{}
-	// for _, item := range paths {
-	// 	params = append(params, item)
-	// 	if inCodition != "" {
-	// 		inCodition += ", "
-	// 	}
-	// 	inCodition += "?"
-	// }
-	// sqlstr := fmt.Sprintf(`select OriginPath, NewPath FROM Path_Maps where OriginPath in (%s)`, inCodition)
 	rows, err := db.Model(&entities.PathMap{}).Select("OriginPath,NewPath").Where("OriginPath in ?", paths).Rows()
-	// rows, err := db.Query(
-	// 	sqlstr, params...)
 	if err != nil {
 		return nil, err
 	}
