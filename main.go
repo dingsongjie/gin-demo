@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 
+	"lenovo-drive-mi-api/configs"
 	"lenovo-drive-mi-api/db"
 	"lenovo-drive-mi-api/log"
 
@@ -20,19 +21,16 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var (
-	logger *zap.Logger
-)
-
 func main() {
-	logger = log.Logger
-	defer logger.Sync()
-	err := godotenv.Load(".env")
-	if err != nil {
-		logger.Fatal("Failed to load environment variables: %v", zap.Error(err))
-	}
-	r := gin.Default()
 
+	godotenv.Load(".env")
+	configs.ConfigDb(os.Getenv("USER_INFO_DB_CONNECTION_STRING"), os.Getenv("NEW_PATH_DB_CONNECTION_STRING"))
+	configs.ConfigGin(os.Getenv("GIN_MODE"))
+	logger := log.GetLogger()
+	defer logger.Sync()
+
+	gin.SetMode(configs.GinMode)
+	r := gin.Default()
 	// Add a ginzap middleware, which:
 	//   - Logs all requests, like a combined access and error log.
 	//   - Logs to stdout.
@@ -45,7 +43,7 @@ func main() {
 
 	// 配置数据库
 
-	db.Config(os.Getenv("USER_INFO_DB_CONNECTION_STRING"), os.Getenv("NEW_PATH_DB_CONNECTION_STRING"))
+	db.AddDbClients()
 
 	routers.AddRouter(r)
 
