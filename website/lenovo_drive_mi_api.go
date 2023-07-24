@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/namsral/flag"
 	"go.uber.org/zap"
 
 	"github.com/dingsongjie/go-project-template/configs"
@@ -22,10 +23,18 @@ import (
 )
 
 func main() {
+	var userInfoDbConnection string
+	var newPathDbConnection string
+	var ginMode string
 	log.GetLogger()
 	godotenv.Load(".env")
-	configs.ConfigDb(os.Getenv("USER_INFO_DB_CONNECTION_STRING"), os.Getenv("NEW_PATH_DB_CONNECTION_STRING"))
-	configs.ConfigGin(os.Getenv("GIN_MODE"))
+	flag.StringVar(&userInfoDbConnection, "user-info-db-connection", "root:bestadmin@tcp(localhost:3306)/db?charset=utf8mb4&parseTime=True&loc=Local", "User info Db connection")
+	flag.StringVar(&newPathDbConnection, "new-path-db-connection", "root:bestadmin@tcp(localhost:3306)/db2?charset=utf8mb4&parseTime=True&loc=Local", "New path Db connection")
+	flag.StringVar(&ginMode, "gin-mode", "release", "Gin mode")
+	flag.Parse()
+	configs.ConfigDb(flag.CommandLine)
+	configs.ConfigGin(flag.CommandLine)
+
 	logger := log.GetLogger()
 	defer logger.Sync()
 
