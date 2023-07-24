@@ -1,11 +1,10 @@
 package controllers
 
 import (
-	"lenovo-drive-mi-api/db"
-	"lenovo-drive-mi-api/entities"
-	"lenovo-drive-mi-api/log"
-	"lenovo-drive-mi-api/models"
-	model "lenovo-drive-mi-api/models"
+	"lenovo-drive-mi-api/pkg/db"
+	"lenovo-drive-mi-api/pkg/entities"
+	"lenovo-drive-mi-api/pkg/log"
+	"lenovo-drive-mi-api/website/models"
 	"net/http"
 	"time"
 
@@ -26,7 +25,7 @@ import (
 // @Success 200  {array} models.FileUserInformation
 // @Router /getUserInfomation [post]
 func GetAllInformation(c *gin.Context) {
-	var requestUser = model.RequestModel{}
+	var requestUser = models.RequestModel{}
 	if err := c.BindJSON(&requestUser); err != nil {
 		return
 	}
@@ -44,7 +43,7 @@ func GetAllInformation(c *gin.Context) {
 	}
 }
 
-func setUserInfo(paths []string, enumerable linq.Linq[*model.FileUserInformation]) error {
+func setUserInfo(paths []string, enumerable linq.Linq[*models.FileUserInformation]) error {
 	db := db.FileUserInfoDb
 	rows, err := db.Table("iris_name_entry as entry").
 		Select("entry.path, entry.ctime, cuser.slug,entry.mtime,muser.slug, entry.path").

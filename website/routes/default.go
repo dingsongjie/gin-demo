@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"lenovo-drive-mi-api/controllers"
 	docs "lenovo-drive-mi-api/docs"
+	"lenovo-drive-mi-api/website/controllers"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

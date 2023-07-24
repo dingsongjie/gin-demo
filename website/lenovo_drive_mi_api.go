@@ -11,10 +11,10 @@ import (
 	"go.uber.org/zap"
 
 	"lenovo-drive-mi-api/configs"
-	"lenovo-drive-mi-api/db"
-	"lenovo-drive-mi-api/log"
+	"lenovo-drive-mi-api/pkg/db"
+	"lenovo-drive-mi-api/pkg/log"
 
-	routers "lenovo-drive-mi-api/routes"
+	routers "lenovo-drive-mi-api/website/routes"
 
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
@@ -22,7 +22,7 @@ import (
 )
 
 func main() {
-
+	log.GetLogger()
 	godotenv.Load(".env")
 	configs.ConfigDb(os.Getenv("USER_INFO_DB_CONNECTION_STRING"), os.Getenv("NEW_PATH_DB_CONNECTION_STRING"))
 	configs.ConfigGin(os.Getenv("GIN_MODE"))

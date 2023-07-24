@@ -9,11 +9,11 @@ COPY . .
 
 # Fetch dependencies.
 # Using go get.
-COPY go.mod go.sum ./
+RUN ls -al
 RUN go mod download && go mod verify
 
-COPY . .
-RUN go build -v -o /usr/local/bin/app ./...
+COPY .  .
+RUN go build -v -o /usr/src/app/app ./...
 
 ENV PORT 8080
 ENV GIN_MODE release
