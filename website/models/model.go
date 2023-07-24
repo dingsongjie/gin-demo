@@ -3,7 +3,7 @@ package models
 import "time"
 
 type RequestModel struct {
-	Paths []string `validate:"required"`
+	Paths []string `validate:"required,max=1"`
 }
 
 type ResponseModel struct {

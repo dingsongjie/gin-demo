@@ -19,6 +19,7 @@ definitions:
       paths:
         items:
           type: string
+        maxItems: 1
         type: array
     required:
     - paths

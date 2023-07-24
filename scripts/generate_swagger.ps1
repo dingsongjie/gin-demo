@@ -1,0 +1,1 @@
+swag init -d .\website\ -g lenovo_drive_mi_api.go -o api

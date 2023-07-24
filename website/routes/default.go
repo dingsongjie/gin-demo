@@ -1,7 +1,7 @@
 package routers
 
 import (
-	docs "lenovo-drive-mi-api/docs"
+	docs "lenovo-drive-mi-api/api"
 	"lenovo-drive-mi-api/website/controllers"
 	"net/http"
 
