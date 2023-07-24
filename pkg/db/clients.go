@@ -1,8 +1,8 @@
 package db
 
 import (
-	"lenovo-drive-mi-api/configs"
-	"lenovo-drive-mi-api/pkg/log"
+	"github.com/dingsongjie/go-project-template/configs"
+	"github.com/dingsongjie/go-project-template/pkg/log"
 
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"

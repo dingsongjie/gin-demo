@@ -1,9 +1,10 @@
 package routers
 
 import (
-	docs "lenovo-drive-mi-api/api"
-	"lenovo-drive-mi-api/website/controllers"
 	"net/http"
+
+	docs "github.com/dingsongjie/go-project-template/api"
+	"github.com/dingsongjie/go-project-template/website/controllers"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

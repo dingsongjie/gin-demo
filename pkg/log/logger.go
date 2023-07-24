@@ -1,7 +1,7 @@
 package log
 
 import (
-	"lenovo-drive-mi-api/configs"
+	"github.com/dingsongjie/go-project-template/configs"
 
 	"go.uber.org/zap"
 )

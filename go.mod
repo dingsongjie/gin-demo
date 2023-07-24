@@ -1,4 +1,4 @@
-module lenovo-drive-mi-api
+module github.com/dingsongjie/go-project-template
 
 go 1.20
 

@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"lenovo-drive-mi-api/pkg/db"
-	"lenovo-drive-mi-api/pkg/entities"
-	"lenovo-drive-mi-api/pkg/log"
-	"lenovo-drive-mi-api/website/models"
 	"net/http"
 	"time"
+
+	"github.com/dingsongjie/go-project-template/pkg/db"
+	"github.com/dingsongjie/go-project-template/pkg/entities"
+	"github.com/dingsongjie/go-project-template/pkg/log"
+	"github.com/dingsongjie/go-project-template/website/models"
 
 	"github.com/STRockefeller/go-linq"
 	"github.com/gin-gonic/gin"

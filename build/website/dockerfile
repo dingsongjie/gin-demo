@@ -5,19 +5,22 @@ FROM golang:1.20.5 AS builder
 
 # Install dependencies
 WORKDIR /usr/src/app
-COPY . .
+COPY go.mod .
 
 # Fetch dependencies.
 # Using go get.
-RUN ls -al
 RUN go mod download && go mod verify
 
 COPY .  .
-RUN go build -v -o /usr/src/app/app ./...
+RUN go build -v -o /usr/src/app/app ./website
+
+FROM alpine:3.18.2 AS final
+
+COPY --from=builder /usr/src/app/app .
 
 ENV PORT 8080
 ENV GIN_MODE release
 EXPOSE 8080
 
 # Run the Go Gin binary.
-ENTRYPOINT ["/usr/local/bin/app"]
+ENTRYPOINT ["./app"]

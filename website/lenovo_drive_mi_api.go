@@ -10,11 +10,11 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 
-	"lenovo-drive-mi-api/configs"
-	"lenovo-drive-mi-api/pkg/db"
-	"lenovo-drive-mi-api/pkg/log"
+	"github.com/dingsongjie/go-project-template/configs"
+	"github.com/dingsongjie/go-project-template/pkg/db"
+	"github.com/dingsongjie/go-project-template/pkg/log"
 
-	routers "lenovo-drive-mi-api/website/routes"
+	routers "github.com/dingsongjie/go-project-template/website/routes"
 
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
