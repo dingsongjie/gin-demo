@@ -17,6 +17,7 @@ import (
 
 	routers "github.com/dingsongjie/go-project-template/website/routes"
 
+	"github.com/gin-contrib/pprof"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -49,6 +50,8 @@ func main() {
 	// Logs all panic to error log
 	//   - stack means whether output the stack info.
 	r.Use(ginzap.RecoveryWithZap(logger, true))
+
+	pprof.Register(r, "dev/pprof")
 
 	// 配置数据库
 
