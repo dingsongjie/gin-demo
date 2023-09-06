@@ -18,7 +18,7 @@ import (
 func main() {
 	var listenDir string
 	godotenv.Load(".env")
-	flag.StringVar(&listenDir, "listen-dir", "./...", "directory of file notify to listen")
+	flag.StringVar(&listenDir, "listen-dir", "./...", "directory of file changed notify to listen")
 	log.Initialise()
 	c := make(chan notify.EventInfo)
 
