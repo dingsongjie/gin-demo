@@ -27,7 +27,7 @@ func main() {
 	var userInfoDbConnection string
 	var newPathDbConnection string
 	var ginMode string
-	log.GetLogger()
+	log.Initialise()
 	godotenv.Load(".env")
 	flag.StringVar(&userInfoDbConnection, "user-info-db-connection", "root:bestadmin@tcp(localhost:3306)/db?charset=utf8mb4&parseTime=True&loc=Local", "User info Db connection")
 	flag.StringVar(&newPathDbConnection, "new-path-db-connection", "root:bestadmin@tcp(localhost:3306)/db2?charset=utf8mb4&parseTime=True&loc=Local", "New path Db connection")
@@ -36,7 +36,7 @@ func main() {
 	configs.ConfigDb(flag.CommandLine)
 	configs.ConfigGin(flag.CommandLine)
 
-	logger := log.GetLogger()
+	logger := log.Logger
 	defer logger.Sync()
 
 	gin.SetMode(configs.GinMode)
