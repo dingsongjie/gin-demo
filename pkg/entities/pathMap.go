@@ -8,5 +8,5 @@ type PathMap struct {
 }
 
 func (*PathMap) TableName() string {
-	return "Path_Maps"
+	return "Path_Maps_2"
 }
